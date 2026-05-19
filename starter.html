@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スターター編 理解度テスト | SHO-SAN</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #534AB7; --purple-light: #EEEDFE; --purple-dark: #3C3489;
+    --green-bg: #EAF3DE; --green-text: #27500A; --green-border: #639922;
+    --red-bg: #FCEBEB; --red-text: #791F1F; --red-border: #A32D2D;
+    --gray-100: #f5f5f5; --gray-200: #e8e8e8; --gray-400: #aaa;
+    --gray-600: #666; --gray-900: #111; --white: #fff; --radius: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  body { font-family: 'Noto Sans JP', sans-serif; background: #F4F2FF; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px 80px; }
+  .container { width: 100%; max-width: 600px; }
+  .header { text-align: center; margin-bottom: 32px; }
+  .header .logo { display: inline-block; background: var(--purple); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; padding: 4px 14px; border-radius: 20px; margin-bottom: 14px; }
+  .header h1 { font-size: 22px; font-weight: 700; color: var(--gray-900); line-height: 1.4; }
+  .header p { font-size: 13px; color: var(--gray-600); margin-top: 6px; }
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 28px 24px; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .progress-bar { flex: 1; height: 5px; background: var(--gray-200); border-radius: 5px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--purple); border-radius: 5px; transition: width 0.4s ease; }
+  .progress-label { font-size: 12px; color: var(--gray-400); white-space: nowrap; min-width: 40px; text-align: right; }
+  .chapter-label { font-size: 11px; color: var(--purple); font-weight: 700; margin-bottom: 16px; }
+  .section-badge { display: inline-block; background: var(--purple-light); color: var(--purple-dark); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+  .question-text { font-size: 16px; font-weight: 500; color: var(--gray-900); line-height: 1.7; margin-bottom: 20px; }
+  .choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .choice-btn { width: 100%; padding: 12px 16px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); background: var(--white); color: var(--gray-900); font-size: 14px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; text-align: left; transition: border-color 0.15s, background 0.15s; line-height: 1.5; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--purple); background: var(--purple-light); }
+  .choice-btn.correct { border-color: var(--green-border); background: var(--green-bg); color: var(--green-text); font-weight: 500; }
+  .choice-btn.wrong { border-color: var(--red-border); background: var(--red-bg); color: var(--red-text); }
+  .choice-btn.dimmed { opacity: 0.45; }
+  .choice-btn:disabled { cursor: default; }
+  .feedback { font-size: 13px; line-height: 1.7; padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; }
+  .feedback.ok { background: var(--green-bg); color: var(--green-text); }
+  .feedback.ng { background: var(--red-bg); color: var(--red-text); }
+  .btn { display: inline-block; padding: 10px 24px; border-radius: var(--radius); font-size: 14px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; border: 1.5px solid var(--gray-200); background: var(--white); color: var(--gray-900); transition: background 0.15s; }
+  .btn:hover { background: var(--gray-100); }
+  .btn.primary { background: var(--purple); color: var(--white); border-color: var(--purple); }
+  .btn.primary:hover { background: var(--purple-dark); }
+
+  /* スタート画面 */
+  .start-screen { text-align: center; padding: 16px 0 8px; }
+  .start-screen .icon { font-size: 48px; margin-bottom: 16px; }
+  .start-screen h2 { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; }
+  .start-screen p { font-size: 14px; color: var(--gray-600); line-height: 1.8; margin-bottom: 20px; }
+  .name-input-wrap { margin-bottom: 20px; text-align: left; }
+  .name-input-wrap label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-600); margin-bottom: 6px; }
+  .name-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); font-size: 15px; font-family: 'Noto Sans JP', sans-serif; outline: none; transition: border-color 0.15s; }
+  .name-input:focus { border-color: var(--purple); }
+
+  /* チャプター選択 */
+  .chapter-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .chapter-item { display: flex; align-items: center; padding: 14px 16px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); cursor: pointer; transition: all 0.15s; background: var(--white); }
+  .chapter-item:hover { border-color: var(--purple); background: var(--purple-light); }
+  .chapter-item.locked { opacity: 0.5; cursor: not-allowed; }
+  .chapter-item.locked:hover { border-color: var(--gray-200); background: var(--white); }
+  .chapter-item.passed { border-color: var(--green-border); background: var(--green-bg); }
+  .ch-icon { font-size: 24px; margin-right: 14px; flex-shrink: 0; }
+  .ch-info { flex: 1; text-align: left; }
+  .ch-title { font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 2px; }
+  .ch-sub { font-size: 12px; color: var(--gray-600); }
+  .ch-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+  .ch-badge.pass { background: var(--green-bg); color: var(--green-text); }
+  .ch-badge.open { background: var(--purple-light); color: var(--purple-dark); }
+  .ch-badge.lock { background: var(--gray-100); color: var(--gray-400); }
+
+  /* 結果画面 */
+  .result-screen { text-align: center; padding: 8px 0; }
+  .score-circle { width: 120px; height: 120px; border-radius: 50%; background: var(--purple-light); border: 4px solid var(--purple); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; }
+  .score-num { font-size: 36px; font-weight: 700; color: var(--purple); line-height: 1; }
+  .score-denom { font-size: 13px; color: var(--purple-dark); }
+  .score-pct { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .score-msg { font-size: 14px; color: var(--gray-600); line-height: 1.7; margin-bottom: 20px; }
+  .saved-badge { display: inline-block; background: var(--green-bg); color: var(--green-text); font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
+  .fail-badge { display: inline-block; background: var(--red-bg); color: var(--red-text); font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
+  .review-title { font-size: 13px; font-weight: 700; color: var(--gray-600); letter-spacing: 0.05em; margin-bottom: 12px; text-align: left; }
+  .review-item { padding: 12px 0; border-bottom: 1px solid var(--gray-200); text-align: left; }
+  .review-item:last-child { border-bottom: none; }
+  .review-q { font-size: 13px; color: var(--gray-900); line-height: 1.6; margin-bottom: 4px; }
+  .review-a { font-size: 12px; color: var(--gray-600); line-height: 1.5; }
+  .tag { display: inline-block; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px; margin-right: 6px; }
+  .tag.ok { background: var(--green-bg); color: var(--green-text); }
+  .tag.ng { background: var(--red-bg); color: var(--red-text); }
+
+  /* 全チャプタークリア */
+  .complete-screen { text-align: center; padding: 16px 0; }
+  .complete-screen .big-icon { font-size: 64px; margin-bottom: 16px; }
+  .complete-screen h2 { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: var(--gray-900); }
+  .complete-screen p { font-size: 14px; color: var(--gray-600); line-height: 1.8; margin-bottom: 24px; }
+  .total-score-bar { background: var(--purple-light); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; text-align: left; }
+  .total-score-bar .label { font-size: 11px; color: var(--gray-600); margin-bottom: 4px; }
+  .total-score-bar .value { font-size: 22px; font-weight: 700; color: var(--purple); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">SHO-SAN</div>
+    <h1>📗 スターター編<br>理解度テスト</h1>
+    <p>チャプターごとに読んだ内容を確認しよう</p>
+  </div>
+  <div class="card" id="main-card"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://zigtfxvdtjzlkqnhitrf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppZ3RmeHZkdGp6bGtxbmhpdHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzY3MjcsImV4cCI6MjA5NDc1MjcyN30.QOmgD3vbYUjBqo3Qg6gcsFoyUjEZ0GVl_KTeP4Jn-4k';
+const PASS_SCORE = 6; // 6問以上で合格（80%）
+
+const chapters = [
+  {
+    id: 'ch1',
+    title: 'Ch1｜基本姿勢と運用の目的',
+    sub: '運用マニュアル1-1・池田塾10か条',
+    icon: '🎯',
+    notionUrl: 'https://www.notion.so/2497a40973ec80f58481e4296e171e0a',
+    questions: [
+      { section:'基本姿勢', q:'SHO-SANのInstagram運用代行における最終的な目的は何ですか？', choices:['フォロワーを増やすこと','毎日投稿を続けること','来場予約から成約（家の契約）に繋げ、クライアントの利益に貢献すること','バズる動画を制作すること'], ans:2, exp:'私たちの目的は「インスタの更新」ではありません。「来場予約→成約（家を建てる契約）」へ繋げ、クライアント様の利益に貢献することです。' },
+      { section:'基本姿勢', q:'運用費として毎月クライアントから受け取る金額の目安はどれですか？', choices:['1万〜5万円','5万〜10万円','15万〜35万円','50万〜100万円'], ans:2, exp:'毎月15万〜35万円の運用費を頂いています。常に「その金額以上の価値を提供できているか」を自問自答することが大切です。' },
+      { section:'基本姿勢', q:'「1タップが会社の顔」という言葉が意味することとして正しいのはどれですか？', choices:['いいねは積極的にたくさん押すべき','軽率な誤字やいいねが、クライアントの信頼を崩す可能性がある','SNSはカジュアルに運用してよい','フォローは慎重に行うべき'], ans:1, exp:'あなたの軽率な誤字や「いいね」が、クライアント様が何年も築いた信頼を崩すことがあります。常にプロとしての自覚が必要です。' },
+      { section:'基本姿勢', q:'迷ったときや問題が発生したとき、SHO-SANでの正しい対応はどれですか？', choices:['自分で判断して解決する','しばらく様子を見る','即座に上司・チームに相談・共有する','SNSで調べて対処する'], ans:2, exp:'「責任＝自己判断しない」。迷ったら即相談！トラブルは即座に共有！「報連相の線引き」を守るのが真の責任感です。' },
+      { section:'池田塾10か条', q:'池田塾10か条の中で「レスは最短」に続く重要な行動として正しいのはどれですか？', choices:['詳しい返答を準備してから返信する','「見ました」のスタンプ一つも立派な意思表示として送る','返信は業務時間内のみ行う','内容を完全に理解してから返信する'], ans:1, exp:'レスは最短【意思表示も合わせてする】が原則です。「見ました」のスタンプ一つも立派な意思表示です！まず即座に反応することが大切。' },
+      { section:'アルゴリズム', q:'現在のInstagramアルゴリズムで、拡散に最も影響が大きい指標の優先順位として正しいのはどれですか？', choices:['いいね数 → コメント数 → 保存数','フォロワー数 → リーチ数 → 保存数','DM数・シェア数 → 保存数 → 滞在時間','コメント数 → 保存数 → フォロー数'], ans:2, exp:'現在のインスタでは「DM数・シェア数」が最も重視され、次に「保存数」、そして「滞在時間（長く見てもらうこと）」の順です。シェアされる・送り合われるコンテンツを目指しましょう。' },
+      { section:'アルゴリズム', q:'現在のInstagramでは、フィード（写真）とリール（動画）の評価はどうなっていますか？', choices:['同じ評価基準でまとめて判断される','リールだけが優遇される','それぞれ別の評価システムで独立して判断される','古い投稿は一切評価されない'], ans:2, exp:'フィード（写真）とリール（動画）は、それぞれ独立した別の評価システムで判断されます。また昔の投稿もアルゴリズムが「本当に興味がある人」にピンポイントで届けてくれます。' }
+    ]
+  },
+  {
+    id: 'ch2',
+    title: 'Ch2｜Instagram基礎用語',
+    sub: '用語理解（基礎編・機能編）',
+    icon: '📚',
+    notionUrl: 'https://www.notion.so/2737a40973ec80a5a48cc8473efa856a',
+    questions: [
+      { section:'基礎用語', q:'Instagramの「表示名」の変更ルールとして正しいのはどれですか？', choices:['1日に何度でも変更できる','7日以内に3回まで変更できる','14日以内に2回まで変更できる','一度設定したら変更できない'], ans:2, exp:'表示名は14日以内に2回までしか変更できません。ユーザーネームとは別のルールなので、混同しないよう注意しましょう。' },
+      { section:'基礎用語', q:'「ユーザーネーム」について正しい説明はどれですか？', choices:['日本語で設定できる表示用の名前','英数字で構成され、ログインやURL等に使われる名前','14日に2回まで変更できる','フォロワーだけに表示される名前'], ans:1, exp:'ユーザーネームは英数字で構成され、ログイン時やアカウント検索、URLなどに使用されます。@付きで記載するとそのユーザーへのリンクになります。' },
+      { section:'基礎用語', q:'Instagramの「保存」機能について、アルゴリズム上で特に重要な理由はどれですか？', choices:['保存数が多いと広告費が下がる','保存数は投稿の拡散に特に大きな影響を与える','保存するとフォロワーが増える','保存数でインサイトが見られる'], ans:1, exp:'保存数は投稿が拡散されるためのアルゴリズムで特に重要です。ユーザーが「後で見たい」と思って保存するのは、コンテンツの質が高い証拠です。' },
+      { section:'基礎用語', q:'「ハッシュタグ」の正しい使い方として、工務店アカウントで特に重要なことはどれですか？', choices:['できるだけ多くのハッシュタグをつける','人気のハッシュタグを必ず入れる','工務店・家づくりに関係するワードのみを使う','ハッシュタグはつけない方がよい'], ans:2, exp:'工務店の場合、工務店に関係するワードのみを載せることが重要です。（#建売 #家づくり など）的確なハッシュタグで検索に引っかかりやすくなります。' },
+      { section:'基礎用語', q:'「プロフィールグリッド」とは何ですか？', choices:['DM一覧が表示される画面','投稿が3列で表示されているプロフィール画面','ストーリーズの保存場所','フォロワー一覧の画面'], ans:1, exp:'プロフィールグリッドとは、投稿が3列で表示されているプロフィール画面のことです。アカウントの第一印象を決める重要な見せ場です。' },
+      { section:'基礎用語', q:'「タグ付け」機能の正しい説明はどれですか？', choices:['投稿にハッシュタグを付ける機能','投稿した写真・動画に他ユーザーのリンクを付与する機能','投稿を保存する機能','コメントをピン留めする機能'], ans:1, exp:'タグ付けは投稿した写真や動画などに「ユーザーリンク」を付与する機能です。タップするとそのユーザーのプロフィールへ飛び、メンション通知も届きます。' },
+      { section:'基礎用語', q:'「DM（ダイレクトメッセージ）」の特徴として正しいのはどれですか？', choices:['投稿へのコメント機能','フォロワー全員に一斉に送れる機能','特定のユーザーにのみ送れる非公開メッセージ機能','外部SNSに共有できる機能'], ans:2, exp:'DMは特定のユーザーに写真・動画・文章などを送れる機能で、メッセージの内容は外部に公開されません。タイムライン右上の「紙飛行機ボタン」から使えます。' }
+    ]
+  },
+  {
+    id: 'ch3',
+    title: 'Ch3｜運用マニュアル実務',
+    sub: '運用マニュアル1-2〜1-6',
+    icon: '⚙️',
+    notionUrl: 'https://www.notion.so/2767a40973ec803f8754caee1dc972bf',
+    questions: [
+      { section:'投稿準備', q:'Instagram運用でミスが特に許されない主な理由として最も適切なのはどれですか？', choices:['アルゴリズムが変わるから','クライアントのブランドイメージと集客・成約に直接影響するから','フォロワーが減るから','投稿頻度が落ちるから'], ans:1, exp:'SHO-SANのInstagram運用代行はクライアントの集客・成約に直結する重要業務です。投稿ミスはブランドイメージや来場予約数に直接影響します。' },
+      { section:'画像選定', q:'画像選定（サムネイル）において最も重要なことはどれですか？', choices:['画像の枚数を多くする','ユーザーが「見たい！」と思わせる、ひと目で伝わる魅力的な写真を選ぶ','必ずロゴを入れる','テキストを多く入れる'], ans:1, exp:'サムネイルはユーザーが投稿をタップするかどうかを決める最重要要素です。ひと目で内容が伝わり、「見たい！」と思わせる写真選びが基本です。' },
+      { section:'投稿準備', q:'Instagramの投稿を作成する際、「神アングル」として重要なポイントはどれですか？', choices:['必ず正面から撮影する','引き、寄り、ななめなど多様な角度を意識する','スマホで縦向き撮影のみにする','フィルターを必ずかける'], ans:1, exp:'「神アングル」では引き・寄り・ななめなど多様な角度が重要です。ユーザーの目を引き、空間の魅力を最大限に伝えるアングルを意識しましょう。' },
+      { section:'Canva', q:'Canvaで作業するときの基本的な注意点として正しいのはどれですか？', choices:['個人アカウントで作業してよい','必ずSHO-SAN共有のチームアカウントで作業する','無料素材のみ使用する','テンプレートは使わない'], ans:1, exp:'Canvaでの作業は必ずSHO-SAN共有のチームアカウントで行います。個人アカウントで作業すると、データが共有されず業務に支障をきたします。' },
+      { section:'リール', q:'リールと画像投稿（フィード）の違いとして正しいのはどれですか？', choices:['どちらも同じ方法で評価される','リールは動画、フィードは写真が中心で別のアルゴリズムで評価される','リールの方が必ず拡散される','フィード投稿の方がエンゲージメントが高い'], ans:1, exp:'リールは動画形式、フィードは写真が中心で、それぞれ専門のAIが別々に評価します。用途に合わせて使い分け、それぞれに最適化した制作が必要です。' },
+      { section:'投稿フロー', q:'投稿前に必ず確認すべきこととして最も重要なのはどれですか？', choices:['いいね数の予測','誤字脱字・情報の正確性・クライアントの確認','ハッシュタグの数','投稿時間の最適化'], ans:1, exp:'投稿前には必ず誤字脱字・情報の正確性・クライアント確認を行います。一度公開した投稿のミスは、ブランドイメージに直接影響します。' },
+      { section:'インサイト', q:'Instagramインサイトで「リーチ」とは何を表しますか？', choices:['投稿が保存された回数','投稿を見たユニークなアカウント数（重複なし）','投稿が表示された総回数（重複あり）','プロフィールへのアクセス数'], ans:1, exp:'リーチとは投稿を実際に見たユニークなアカウント数（重複なし）のことです。インプレッションとは違い、何回も見た人を1回としてカウントします。' }
+    ]
+  },
+  {
+    id: 'ch4',
+    title: 'Ch4｜フォロー施策・ペルソナ',
+    sub: 'フォロー施策・ペルソナ分析・工務店集客',
+    icon: '👥',
+    notionUrl: 'https://www.notion.so/2d37a40973ec806687def2f9321a3591',
+    questions: [
+      { section:'ペルソナ分析', q:'ペルソナ分析を行う最大の目的はどれですか？', choices:['競合他社を分析するため','ターゲットユーザーを具体的にイメージしてコンテンツを最適化するため','フォロワー数を増やすため','広告費用を削減するため'], ans:1, exp:'ペルソナ分析はターゲットユーザーを具体的にイメージすることで、「このユーザーは何を知りたいか？」という視点でコンテンツを最適化するために行います。' },
+      { section:'工務店集客', q:'工務店の集客においてInstagramが重要な理由として最も正しいのはどれですか？', choices:['Instagramは無料で使えるから','家づくりを検討するユーザーが施工事例・雰囲気をビジュアルで確認できるから','他のSNSより広告費が安いから','若者にしかリーチできないから'], ans:1, exp:'工務店集客でInstagramが重要なのは、家づくりを検討するユーザーが施工事例・雰囲気をビジュアルで確認できるため。ユーザーとコミュニケーションをとれる機能も充実しています。' },
+      { section:'フォロー施策', q:'フォロー施策を行う目的として正しいのはどれですか？', choices:['フォロワー数をとにかく増やすこと','ターゲット層のユーザーにアカウントを認知してもらい、フォロバを期待すること','競合アカウントを監視すること','Instagramの規約上、必須の作業だから'], ans:1, exp:'フォロー施策の目的は、ターゲット層にアカウントを認知してもらいフォロバを期待することです。無差別にフォローするのではなく、ターゲットを絞ることが重要です。' },
+      { section:'ペルソナ分析', q:'ペルソナを設定する際、特に重要な情報として正しいのはどれですか？', choices:['ペルソナの年収と職業のみ','年齢・家族構成・ライフスタイル・住まいに対する価値観など具体的な人物像','フォロワー数と投稿頻度','競合他社の情報'], ans:1, exp:'ペルソナ設定では年齢・家族構成・ライフスタイル・価値観など具体的な人物像を描くことが重要です。「この人はどんな投稿を見たいか？」という視点が生まれます。' },
+      { section:'工務店集客', q:'工務店のInstagramアカウントで最終的に促したいユーザーの行動はどれですか？', choices:['コメントをたくさんしてもらうこと','保存をしてもらうこと','ホームページへのアクセスや来場予約・問い合わせの増加','シェアをしてもらうこと'], ans:2, exp:'工務店様のInstagramアカウントを通じて促したいのは、ホームページへのアクセス促進と来場予約や問い合わせの増加です。これが成約（家の契約）につながります。' },
+      { section:'フォロー施策', q:'フォロー施策を実施する際の注意点として正しいのはどれですか？', choices:['1日にできるだけ多くのアカウントをフォローする','ターゲット外のアカウントも幅広くフォローする','Instagramのフォロー上限ルールを守り、ターゲットに絞って行う','毎日同じ時間に行う必要がある'], ans:2, exp:'フォロー施策はInstagramのフォロー上限ルールを守りながら、ターゲット層に絞って行うことが重要です。スパム判定を避けるためにも慎重に実施しましょう。' },
+      { section:'成果創出', q:'SHO-SANがクライアントに提供する「成果」の定義として正しいのはどれですか？', choices:['フォロワー1万人達成','毎日の投稿継続','バズった投稿の制作','Instagram運用を通じた来場予約・成約（家の契約）への貢献'], ans:3, exp:'SHO-SANの成果とは「成約＝家を建てる契約」に繋げることです。フォロワー数や投稿数ではなく、クライアントのビジネスに直接貢献できるかどうかが評価基準です。' }
+    ]
+  }
+];
+
+let userName = '';
+let currentChapterIdx = 0;
+let currentQIdx = 0;
+let chapterScore = 0;
+let chapterLog = [];
+let passedChapters = {};
+let chapterScoreRecord = {};
+let totalAnswered = 0;
+let totalCorrect = 0;
+
+const card = document.getElementById('main-card');
+
+function renderStart() {
+  card.innerHTML = `
+    <div class="start-screen">
+      <div class="icon">📗</div>
+      <h2>テストを始める前に</h2>
+      <p>スターター編のLearning BOXを読んだ後、<br>各チャプターのテストに合格しよう！<br>全4チャプター・各7問・6問以上（80%）で合格です。</p>
+      <div class="name-input-wrap">
+        <label>あなたの名前を入力してください</label>
+        <input class="name-input" id="nameInput" type="text" placeholder="例：山田 太郎" maxlength="30">
+      </div>
+      <button class="btn primary" onclick="startApp()">はじめる →</button>
+    </div>`;
+}
+
+function startApp() {
+  const raw = document.getElementById('nameInput').value;
+  const trimmed = raw.replace(/[\s\u3000]+/g, ''); // 全角・半角スペース除去
+  if (!trimmed) { alert('名前を入力してください'); return; }
+  userName = raw.trim().replace(/\s+/g, ' '); // 前後trim、中間スペースは1つに
+  if (!userName) { alert('名前を入力してください'); return; }
+  renderChapterSelect();
+}
+
+function renderChapterSelect() {
+  const allPassed = chapters.every(c => passedChapters[c.id]);
+  if (allPassed) { renderAllComplete(); return; }
+
+  const items = chapters.map((ch, i) => {
+    const passed = passedChapters[ch.id];
+    const locked = i > 0 && !passedChapters[chapters[i-1].id];
+    let badgeHtml = '';
+    let cls = '';
+    if (passed) { badgeHtml = `<span class="ch-badge pass">✓ 合格</span>`; cls = 'passed'; }
+    else if (locked) { badgeHtml = `<span class="ch-badge lock">🔒 前のChを先に</span>`; cls = 'locked'; }
+    else { badgeHtml = `<span class="ch-badge open">受験する</span>`; }
+    const onclick = (!passed && !locked) ? `onclick="startChapter(${i})"` : '';
+    return `<div class="chapter-item ${cls}" ${onclick}>
+      <div class="ch-icon">${ch.icon}</div>
+      <div class="ch-info">
+        <div class="ch-title">${ch.title}</div>
+        <div class="ch-sub">${ch.sub}</div>
+      </div>
+      ${badgeHtml}
+    </div>`;
+  }).join('');
+
+  card.innerHTML = `
+    <p style="font-size:14px;color:var(--gray-600);margin-bottom:16px;">こんにちは、<strong>${userName}</strong>さん！<br>受験するチャプターを選んでください。</p>
+    <div class="chapter-list">${items}</div>
+  `;
+}
+
+function startChapter(idx) {
+  currentChapterIdx = idx;
+  currentQIdx = 0;
+  chapterScore = 0;
+  chapterLog = [];
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const ch = chapters[currentChapterIdx];
+  const q = ch.questions[currentQIdx];
+  const total = ch.questions.length;
+  const pct = Math.round((currentQIdx / total) * 100);
+
+  card.innerHTML = `
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="progress-label">${currentQIdx + 1} / ${total}</div>
+    </div>
+    <div class="chapter-label">${ch.icon} ${ch.title}</div>
+    <div class="section-badge">${q.section}</div>
+    <div class="question-text">${q.q}</div>
+    <div class="choices">
+      ${q.choices.map((c, i) => `<button class="choice-btn" id="c${i}" onclick="pick(${i})">${c}</button>`).join('')}
+    </div>
+    <div id="feedback"></div>
+    <div id="nav"></div>`;
+}
+
+function pick(i) {
+  const ch = chapters[currentChapterIdx];
+  const q = ch.questions[currentQIdx];
+  const correct = i === q.ans;
+  if (correct) chapterScore++;
+  chapterLog.push({ q: q.q, correct, yourAns: q.choices[i], rightAns: q.choices[q.ans] });
+
+  for (let j = 0; j < q.choices.length; j++) {
+    const btn = document.getElementById('c' + j);
+    btn.disabled = true;
+    if (j === q.ans) btn.classList.add('correct');
+    else if (j === i) btn.classList.add('wrong');
+    else btn.classList.add('dimmed');
+  }
+
+  document.getElementById('feedback').innerHTML =
+    `<div class="feedback ${correct?'ok':'ng'}">${correct?'✓ 正解！':'✗ 不正解。'} ${q.exp}</div>`;
+
+  const isLast = currentQIdx >= ch.questions.length - 1;
+  document.getElementById('nav').innerHTML = isLast
+    ? `<button class="btn primary" onclick="finishChapter()">結果を見る →</button>`
+    : `<button class="btn primary" onclick="nextQ()">次の問題 →</button>`;
+}
+
+function nextQ() { currentQIdx++; renderQuestion(); }
+
+async function finishChapter() {
+  const ch = chapters[currentChapterIdx];
+  const passed = chapterScore >= PASS_SCORE;
+  if (passed) passedChapters[ch.id] = true;
+  chapterScoreRecord[ch.id] = chapterScore;
+  totalAnswered += ch.questions.length;
+  totalCorrect += chapterScore;
+
+  // Supabaseに保存
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/quiz_results`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({
+        name: userName,
+        score: chapterScore,
+        total: ch.questions.length,
+        quiz_type: 'starter',
+        chapter: ch.id,
+        chapter_scores: { [ch.id]: chapterScore }
+      })
+    });
+  } catch(e) { console.error(e); }
+
+  renderChapterResult(passed);
+}
+
+function renderChapterResult(passed) {
+  const ch = chapters[currentChapterIdx];
+  const total = ch.questions.length;
+  const pct = Math.round((chapterScore / total) * 100);
+
+  const reviewHTML = chapterLog.map((item, i) => `
+    <div class="review-item">
+      <div class="review-q"><span class="tag ${item.correct?'ok':'ng'}">${item.correct?'○':'✗'}</span>Q${i+1}：${item.q}</div>
+      ${!item.correct?`<div class="review-a" style="padding-left:26px">あなたの回答：${item.yourAns}<br>正解：<strong>${item.rightAns}</strong></div>`:''}
+    </div>`).join('');
+
+  const msg = passed
+    ? pct===100?'満点！完璧な理解です👏':'合格！よく理解できています。'
+    : 'もう少し！もう一度チャレンジしてみましょう。';
+
+  card.innerHTML = `
+    <div class="result-screen">
+      <div class="score-circle">
+        <div class="score-num">${chapterScore}</div>
+        <div class="score-denom">/ ${total}</div>
+      </div>
+      <div class="score-pct">${pct}%</div>
+      <div class="score-msg">${msg}</div>
+      ${passed
+        ? `<div class="saved-badge">✓ ${ch.title} 合格！</div>`
+        : `<div class="fail-badge">✗ 不合格（合格ライン：${PASS_SCORE}問以上）</div>`
+      }
+      <br>
+      ${passed
+        ? `<button class="btn primary" onclick="renderChapterSelect()" style="margin-bottom:24px">次のチャプターへ →</button>`
+        : `<button class="btn primary" onclick="startChapter(${currentChapterIdx})" style="margin-bottom:24px">もう一度挑戦する</button>`
+      }
+      <div class="review-title">回答の振り返り</div>
+      ${reviewHTML}
+      <br>
+      <button class="btn" onclick="renderChapterSelect()">チャプター選択に戻る</button>
+    </div>`;
+}
+
+function renderAllComplete() {
+  const totalQ = chapters.reduce((s,c) => s+c.questions.length, 0);
+  card.innerHTML = `
+    <div class="complete-screen">
+      <div class="big-icon">🎉</div>
+      <h2>スターター編コンプリート！</h2>
+      <p>全4チャプターを合格しました。<br>Instagram運用の基礎知識はバッチリです！<br>これからの実務でしっかり活かしていきましょう。</p>
+      <div class="total-score-bar">
+        <div class="label">総合成績</div>
+        <div class="value">${chapters.map(c=>`${c.icon} ${c.id.toUpperCase()}：${chapterScoreRecord[c.id]||'?'}/${c.questions.length}`).join('　')}</div>
+      </div>
+      <button class="btn primary" onclick="resetAll()">最初からやり直す</button>
+    </div>`;
+}
+
+function resetAll() {
+  passedChapters = {};
+  chapterScoreRecord = {};
+  totalAnswered = 0;
+  totalCorrect = 0;
+  renderStart();
+}
+
+renderStart();
+</script>
+</body>
+</html>
