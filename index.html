@@ -35,6 +35,8 @@
   .choice-btn.wrong { border-color: var(--red-border); background: var(--red-bg); color: var(--red-text); }
   .choice-btn.dimmed { opacity: 0.45; }
   .choice-btn:disabled { cursor: default; }
+  .choice-btn.selected { border-color: var(--purple); background: var(--purple-light); font-weight: 500; }
+  .multi-hint { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; }
   .feedback { font-size: 13px; line-height: 1.7; padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; }
   .feedback.ok { background: var(--green-bg); color: var(--green-text); }
   .feedback.ng { background: var(--red-bg); color: var(--red-text); }
@@ -86,7 +88,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const questions = [
   { section:"SHO-SANについて", q:"SHO-SANの社長の名前は？", choices:["高谷 一起","田中 翔","山本 一樹","石井 将"], ans:0, exp:"社長は高谷 一起（いっき）さんです。" },
-  { section:"SHO-SANについて", q:"SHO-SANが認定されているのはどれですか？", choices:["健康経営優良企業","働きがいのある会社","ベストベンチャー100","女性活躍推進企業"], ans:1, exp:"「働きがいのある会社」認定企業です。" },
+  { section:"SHO-SANについて", q:"SHO-SANが受賞・認定されているものを全て選んでください。", choices:["健康経営優良企業","働きがいのある会社","ベストベンチャー100","SMBエクセレント企業賞"], multi:true, ans:[1,2,3], exp:"「働きがいのある会社」「ベストベンチャー100」「SMBエクセレント企業賞」の3つ全て受賞・認定されています！" },
   { section:"SHO-SANについて", q:"SNSに関することを管理・運用する部署は？", choices:["フロントDiv","制作Div","SNSディビジョン","マーケティングDiv"], ans:2, exp:"SNSに関することを管理・運用するのがSNSディビジョンです。" },
   { section:"勤務ルール", q:"出社後の正しい順番はどれですか？", choices:["ジョブカンで打刻 → バーチャルオフィスに入室","Slackを開く → 業務開始","バーチャルオフィスに入室 → ジョブカンで打刻","メールを確認 → 朝礼"], ans:2, exp:"まずバーチャルオフィスに入室してから、ジョブカンで打刻するのが正しい流れです。" },
   { section:"勤務ルール", q:"欠勤・遅刻する場合、連絡はいつまでにすべきですか？", choices:["当日の勤務開始時刻まで","前日の夜までに","1時間前までに","始業後に気づいたタイミングで"], ans:0, exp:"欠勤・遅刻の連絡は当日の勤務開始時刻までに行う必要があります。" },
@@ -126,9 +128,17 @@ function startQuiz() {
   userName = input; renderQuiz();
 }
 
+let multiSelected = [];
+
 function renderQuiz() {
   const q = questions[current];
   const pct = Math.round((current / questions.length) * 100);
+  multiSelected = [];
+  const hintHtml = q.multi ? `<div class="multi-hint">※ 当てはまるものを全て選んで「回答する」を押してください</div>` : '';
+  const choicesHtml = q.multi
+    ? q.choices.map((c, i) => `<button class="choice-btn" id="c${i}" onclick="toggleMulti(${i})">${c}</button>`).join('')
+    : q.choices.map((c, i) => `<button class="choice-btn" id="c${i}" onclick="pick(${i})">${c}</button>`).join('');
+  const submitHtml = q.multi ? `<div id="submit-wrap" style="margin-bottom:16px"><button class="btn primary" onclick="pickMulti()">回答する →</button></div>` : '';
   card.innerHTML = `
     <div class="progress-wrap">
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -136,8 +146,44 @@ function renderQuiz() {
     </div>
     <div class="section-badge">${q.section}</div>
     <div class="question-text">${q.q}</div>
-    <div class="choices">${q.choices.map((c, i) => `<button class="choice-btn" id="c${i}" onclick="pick(${i})">${c}</button>`).join('')}</div>
+    ${hintHtml}
+    <div class="choices">${choicesHtml}</div>
+    ${submitHtml}
     <div id="feedback"></div><div id="nav"></div>`;
+}
+
+function toggleMulti(i) {
+  const btn = document.getElementById('c' + i);
+  if (multiSelected.includes(i)) {
+    multiSelected = multiSelected.filter(x => x !== i);
+    btn.classList.remove('selected');
+  } else {
+    multiSelected.push(i);
+    btn.classList.add('selected');
+  }
+}
+
+function pickMulti() {
+  const q = questions[current];
+  if (multiSelected.length === 0) { alert('1つ以上選んでください'); return; }
+  const correct = q.ans.length === multiSelected.length && q.ans.every(a => multiSelected.includes(a));
+  if (correct) score++;
+  const yourAnsText = multiSelected.map(i => q.choices[i]).join('・');
+  const rightAnsText = q.ans.map(i => q.choices[i]).join('・');
+  log.push({ q: q.q, correct, yourAns: yourAnsText, rightAns: rightAnsText });
+  document.getElementById('submit-wrap').remove();
+  for (let j = 0; j < q.choices.length; j++) {
+    const btn = document.getElementById('c' + j);
+    btn.disabled = true;
+    btn.classList.remove('selected');
+    if (q.ans.includes(j)) btn.classList.add('correct');
+    else if (multiSelected.includes(j)) btn.classList.add('wrong');
+    else btn.classList.add('dimmed');
+  }
+  document.getElementById('feedback').innerHTML = `<div class="feedback ${correct?'ok':'ng'}">${correct?'✓ 正解！':'✗ 不正解。'} ${q.exp}</div>`;
+  document.getElementById('nav').innerHTML = current < questions.length - 1
+    ? `<button class="btn primary" onclick="nextQ()">次の問題 →</button>`
+    : `<button class="btn primary" onclick="finishQuiz()">結果を見る →</button>`;
 }
 
 function pick(i) {
@@ -188,12 +234,12 @@ function renderResult() {
       <div class="score-pct">${pct}%</div>
       <div class="score-msg">${msg}</div>
       <div class="saved-badge">✓ 結果を保存しました</div><br><br>
-      <button class="btn" onclick="restart()" style="margin-bottom:28px">もう一度挑戦する</button>
+      ${score < 7 ? `<button class="btn" onclick="restart()" style="margin-bottom:28px">もう一度挑戦する</button>` : ''}
       <div class="review-title">回答の振り返り</div>${reviewHTML}
     </div>`;
 }
 
-function restart() { current=0; score=0; log=[]; userName=''; renderStart(); }
+function restart() { current=0; score=0; log=[]; userName=''; multiSelected=[]; renderStart(); }
 renderStart();
 </script>
 </body>
