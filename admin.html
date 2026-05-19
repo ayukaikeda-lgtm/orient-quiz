@@ -11,12 +11,13 @@
     --purple: #534AB7; --purple-light: #EEEDFE; --purple-dark: #3C3489;
     --green-bg: #EAF3DE; --green-text: #27500A;
     --red-bg: #FCEBEB; --red-text: #791F1F;
+    --blue-bg: #E8F4FD; --blue-text: #1A5F8A;
     --gray-100: #f5f5f5; --gray-200: #e8e8e8; --gray-400: #aaa;
     --gray-600: #666; --gray-900: #111; --white: #fff; --radius: 10px;
     --shadow: 0 4px 24px rgba(0,0,0,0.08);
   }
   body { font-family: 'Noto Sans JP', sans-serif; background: #F4F2FF; min-height: 100vh; padding: 40px 16px 80px; }
-  .container { width: 100%; max-width: 860px; margin: 0 auto; }
+  .container { width: 100%; max-width: 900px; margin: 0 auto; }
   .header { text-align: center; margin-bottom: 32px; }
   .header .logo { display: inline-block; background: var(--purple); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; padding: 4px 14px; border-radius: 20px; margin-bottom: 14px; }
   .header h1 { font-size: 22px; font-weight: 700; color: var(--gray-900); }
@@ -35,13 +36,19 @@
   .btn.primary:hover { background: var(--purple-dark); }
   .error-msg { font-size: 13px; color: var(--red-text); margin-top: 8px; }
 
+  /* タブ */
+  .tab-wrap { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid var(--gray-200); padding-bottom: 0; }
+  .tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 700; font-family: 'Noto Sans JP', sans-serif; border: none; background: none; cursor: pointer; color: var(--gray-400); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+  .tab-btn:hover:not(.active) { color: var(--gray-600); }
+
   /* Stats */
   .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
   .stat-item { background: var(--gray-100); border-radius: 8px; padding: 16px; text-align: center; }
   .stat-value { font-size: 28px; font-weight: 700; color: var(--purple); }
   .stat-label { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
 
-  /* Filter */
+  /* フィルター */
   .filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
   .filter-bar input { flex: 1; min-width: 160px; padding: 8px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; outline: none; }
   .filter-bar input:focus { border-color: var(--purple); }
@@ -49,19 +56,31 @@
   .reload-btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; border: 1.5px solid var(--gray-200); background: white; cursor: pointer; }
   .reload-btn:hover { background: var(--gray-100); }
 
-  /* Table */
+  /* テーブル */
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  thead th { background: var(--gray-100); padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600); letter-spacing: 0.05em; border-bottom: 1px solid var(--gray-200); }
+  thead th { background: var(--gray-100); padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600); letter-spacing: 0.05em; border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
   tbody tr { border-bottom: 1px solid var(--gray-200); transition: background 0.1s; }
   tbody tr:hover { background: var(--gray-100); }
   tbody tr:last-child { border-bottom: none; }
-  td { padding: 12px 14px; color: var(--gray-900); }
-  .score-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+  td { padding: 12px 14px; color: var(--gray-900); vertical-align: middle; }
+  .score-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; }
   .score-pass { background: var(--green-bg); color: var(--green-text); }
   .score-fail { background: var(--red-bg); color: var(--red-text); }
   .empty-msg { text-align: center; padding: 40px; color: var(--gray-400); font-size: 14px; }
   .loading { text-align: center; padding: 40px; color: var(--gray-400); }
+
+  /* スターター進捗テーブル */
+  .ch-dot { display: inline-block; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 700; text-align: center; line-height: 22px; }
+  .ch-dot.pass { background: var(--green-bg); color: var(--green-text); }
+  .ch-dot.fail { background: var(--red-bg); color: var(--red-text); }
+  .ch-dot.none { background: var(--gray-100); color: var(--gray-400); }
+
+  /* 受験回数バッジ */
+  .count-badge { display: inline-block; background: var(--blue-bg); color: var(--blue-text); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+
+  /* セクション見出し */
+  .section-title { font-size: 13px; font-weight: 700; color: var(--gray-600); letter-spacing: 0.05em; margin-bottom: 12px; }
 </style>
 </head>
 <body>
@@ -88,40 +107,31 @@ const SUPABASE_URL = 'https://zigtfxvdtjzlkqnhitrf.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppZ3RmeHZkdGp6bGtxbmhpdHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzY3MjcsImV4cCI6MjA5NDc1MjcyN30.QOmgD3vbYUjBqo3Qg6gcsFoyUjEZ0GVl_KTeP4Jn-4k';
 const ADMIN_PASSWORD = 'shosan2024';
 
+const CHAPTERS = ['ch1','ch2','ch3','ch4'];
+const CH_LABELS = { ch1:'Ch1 基本姿勢', ch2:'Ch2 基礎用語', ch3:'Ch3 運用実務', ch4:'Ch4 フォロー/ペルソナ' };
+const PASS_ORIENT = 7;
+const PASS_STARTER = 6;
+
 let allResults = [];
+let currentTab = 'orient';
 let filterText = '';
 let filterResult = 'all';
 
 function login() {
   const pw = document.getElementById('pwInput').value;
-  if (pw === ADMIN_PASSWORD) {
-    renderDashboard();
-    loadResults();
-  } else {
-    document.getElementById('errMsg').textContent = 'パスワードが違います';
-  }
+  if (pw === ADMIN_PASSWORD) { renderDashboard(); loadResults(); }
+  else { document.getElementById('errMsg').textContent = 'パスワードが違います'; }
 }
 
 function renderDashboard() {
   document.getElementById('main-card').innerHTML = `
-    <div class="filter-bar">
-      <input type="text" placeholder="名前で検索..." oninput="filterText=this.value;renderTable()" />
-      <select class="filter-select" onchange="filterResult=this.value;renderTable()">
-        <option value="all">全員</option>
-        <option value="pass">合格のみ（7問以上）</option>
-        <option value="fail">不合格のみ</option>
-      </select>
-      <button class="reload-btn" onclick="loadResults()">🔄 更新</button>
+    <div class="tab-wrap">
+      <button class="tab-btn active" id="tab-orient" onclick="switchTab('orient')">📋 初日オリエン編</button>
+      <button class="tab-btn" id="tab-starter" onclick="switchTab('starter')">📗 スターター編</button>
+      <button class="tab-btn" id="tab-direction" onclick="switchTab('direction')">🎬 ディレクション編</button>
+      <button class="tab-btn" id="tab-all" onclick="switchTab('all')">👥 受験者サマリー</button>
     </div>
-    <div class="stats-grid" id="statsGrid">
-      <div class="stat-item"><div class="stat-value">—</div><div class="stat-label">受験者数</div></div>
-      <div class="stat-item"><div class="stat-value">—</div><div class="stat-label">平均点</div></div>
-      <div class="stat-item"><div class="stat-value">—</div><div class="stat-label">合格率</div></div>
-      <div class="stat-item"><div class="stat-value">—</div><div class="stat-label">最高点</div></div>
-    </div>
-    <div class="table-wrap">
-      <div class="loading" id="tableArea">読み込み中...</div>
-    </div>
+    <div id="tab-content"><div class="loading">読み込み中...</div></div>
   `;
 }
 
@@ -131,43 +141,74 @@ async function loadResults() {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
     });
     allResults = await res.json();
-    renderStats();
-    renderTable();
+    renderTab();
   } catch(e) {
-    document.getElementById('tableArea').innerHTML = '<div class="empty-msg">データの取得に失敗しました</div>';
+    document.getElementById('tab-content').innerHTML = '<div class="empty-msg">データの取得に失敗しました</div>';
   }
 }
 
-function renderStats() {
-  if (!allResults.length) return;
-  const total = allResults.length;
-  const avg = (allResults.reduce((s, r) => s + r.score, 0) / total).toFixed(1);
-  const passCount = allResults.filter(r => r.score >= 7).length;
-  const passRate = Math.round((passCount / total) * 100);
-  const max = Math.max(...allResults.map(r => r.score));
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-item"><div class="stat-value">${total}</div><div class="stat-label">受験者数</div></div>
-    <div class="stat-item"><div class="stat-value">${avg}</div><div class="stat-label">平均点</div></div>
-    <div class="stat-item"><div class="stat-value">${passRate}%</div><div class="stat-label">合格率</div></div>
-    <div class="stat-item"><div class="stat-value">${max}</div><div class="stat-label">最高点</div></div>
+function switchTab(tab) {
+  currentTab = tab;
+  filterText = '';
+  filterResult = 'all';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  renderTab();
+}
+
+function renderTab() {
+  if (currentTab === 'orient') renderOrientTab();
+  else if (currentTab === 'starter') renderStarterTab();
+  else if (currentTab === 'direction') renderDirectionTab();
+  else renderSummaryTab();
+}
+
+/* ── オリエン編タブ ── */
+function renderOrientTab() {
+  const data = allResults.filter(r => !r.quiz_type || r.quiz_type === 'orient');
+  document.getElementById('tab-content').innerHTML = `
+    <div class="filter-bar">
+      <input type="text" placeholder="名前で検索..." value="${filterText}" oninput="filterText=this.value;renderOrientTab()" />
+      <select class="filter-select" onchange="filterResult=this.value;renderOrientTab()">
+        <option value="all" ${filterResult==='all'?'selected':''}>全員</option>
+        <option value="pass" ${filterResult==='pass'?'selected':''}>合格のみ（7問以上）</option>
+        <option value="fail" ${filterResult==='fail'?'selected':''}>不合格のみ</option>
+      </select>
+      <button class="reload-btn" onclick="loadResults()">🔄 更新</button>
+    </div>
+    <div id="orient-stats"></div>
+    <div class="table-wrap" id="orient-table"><div class="loading">...</div></div>
   `;
+  renderOrientStats(data);
+  renderOrientTable(data);
 }
 
-function renderTable() {
-  let filtered = allResults;
-  if (filterText) filtered = filtered.filter(r => r.name.includes(filterText));
-  if (filterResult === 'pass') filtered = filtered.filter(r => r.score >= 7);
-  if (filterResult === 'fail') filtered = filtered.filter(r => r.score < 7);
+function renderOrientStats(data) {
+  if (!data.length) { document.getElementById('orient-stats').innerHTML = ''; return; }
+  const total = data.length;
+  const avg = (data.reduce((s,r)=>s+r.score,0)/total).toFixed(1);
+  const passCount = data.filter(r=>r.score>=PASS_ORIENT).length;
+  const passRate = Math.round((passCount/total)*100);
+  const max = Math.max(...data.map(r=>r.score));
+  document.getElementById('orient-stats').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-value">${total}</div><div class="stat-label">受験者数</div></div>
+      <div class="stat-item"><div class="stat-value">${avg}</div><div class="stat-label">平均点</div></div>
+      <div class="stat-item"><div class="stat-value">${passRate}%</div><div class="stat-label">合格率</div></div>
+      <div class="stat-item"><div class="stat-value">${max}</div><div class="stat-label">最高点</div></div>
+    </div>`;
+}
 
-  if (!filtered.length) {
-    document.getElementById('tableArea').innerHTML = '<div class="empty-msg">該当するデータがありません</div>';
-    return;
-  }
-
+function renderOrientTable(data) {
+  let filtered = data;
+  if (filterText) filtered = filtered.filter(r=>r.name.includes(filterText));
+  if (filterResult==='pass') filtered = filtered.filter(r=>r.score>=PASS_ORIENT);
+  if (filterResult==='fail') filtered = filtered.filter(r=>r.score<PASS_ORIENT);
+  if (!filtered.length) { document.getElementById('orient-table').innerHTML='<div class="empty-msg">該当データなし</div>'; return; }
   const rows = filtered.map(r => {
-    const pass = r.score >= 7;
-    const pct = Math.round((r.score / r.total) * 100);
-    const date = new Date(r.created_at).toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    const pass = r.score >= PASS_ORIENT;
+    const pct = Math.round((r.score/r.total)*100);
+    const date = new Date(r.created_at).toLocaleString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
     return `<tr>
       <td>${r.name}</td>
       <td><span class="score-badge ${pass?'score-pass':'score-fail'}">${r.score} / ${r.total}点（${pct}%）</span></td>
@@ -175,12 +216,227 @@ function renderTable() {
       <td style="color:var(--gray-600);font-size:13px">${date}</td>
     </tr>`;
   }).join('');
-
-  document.getElementById('tableArea').innerHTML = `
+  document.getElementById('orient-table').innerHTML = `
     <table>
       <thead><tr><th>名前</th><th>スコア</th><th>判定</th><th>受験日時</th></tr></thead>
       <tbody>${rows}</tbody>
+    </table>`;
+}
+
+/* ── スターター編タブ ── */
+function renderStarterTab() {
+  const data = allResults.filter(r => r.quiz_type === 'starter');
+  document.getElementById('tab-content').innerHTML = `
+    <div class="filter-bar">
+      <input type="text" placeholder="名前で検索..." value="${filterText}" oninput="filterText=this.value;renderStarterTab()" />
+      <select class="filter-select" onchange="filterResult=this.value;renderStarterTab()">
+        <option value="all" ${filterResult==='all'?'selected':''}>全員</option>
+        <option value="pass" ${filterResult==='pass'?'selected':''}>合格のみ</option>
+        <option value="fail" ${filterResult==='fail'?'selected':''}>不合格のみ</option>
+      </select>
+      <button class="reload-btn" onclick="loadResults()">🔄 更新</button>
+    </div>
+    <div id="starter-stats"></div>
+    <div class="table-wrap" id="starter-table"></div>
+  `;
+  renderStarterStats(data);
+  renderStarterTable(data);
+}
+
+function renderStarterStats(data) {
+  if (!data.length) { document.getElementById('starter-stats').innerHTML=''; return; }
+  const total = data.length;
+  // ユニーク受験者（名前別でch1〜4すべて合格した人）
+  const byName = {};
+  data.forEach(r => {
+    if (!byName[r.name]) byName[r.name] = {};
+    if (!byName[r.name][r.chapter] || byName[r.name][r.chapter] < r.score)
+      byName[r.name][r.chapter] = r.score;
+  });
+  const names = Object.keys(byName);
+  const fullPassCount = names.filter(n => CHAPTERS.every(c => (byName[n][c]||0) >= PASS_STARTER)).length;
+  const avg = (data.reduce((s,r)=>s+r.score,0)/total).toFixed(1);
+  document.getElementById('starter-stats').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-value">${names.length}</div><div class="stat-label">受験者数</div></div>
+      <div class="stat-item"><div class="stat-value">${total}</div><div class="stat-label">総受験回数</div></div>
+      <div class="stat-item"><div class="stat-value">${avg}</div><div class="stat-label">平均点（1回）</div></div>
+      <div class="stat-item"><div class="stat-value">${fullPassCount}</div><div class="stat-label">全Ch合格者</div></div>
+    </div>`;
+}
+
+function renderStarterTable(data) {
+  let filtered = data;
+  if (filterText) filtered = filtered.filter(r=>r.name.includes(filterText));
+  if (filterResult==='pass') filtered = filtered.filter(r=>r.score>=PASS_STARTER);
+  if (filterResult==='fail') filtered = filtered.filter(r=>r.score<PASS_STARTER);
+  if (!filtered.length) { document.getElementById('starter-table').innerHTML='<div class="empty-msg">該当データなし</div>'; return; }
+  const rows = filtered.map(r => {
+    const pass = r.score >= PASS_STARTER;
+    const pct = Math.round((r.score/r.total)*100);
+    const date = new Date(r.created_at).toLocaleString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const chLabel = CH_LABELS[r.chapter] || r.chapter || '—';
+    return `<tr>
+      <td>${r.name}</td>
+      <td style="font-size:12px;color:var(--gray-600)">${chLabel}</td>
+      <td><span class="score-badge ${pass?'score-pass':'score-fail'}">${r.score} / ${r.total}点（${pct}%）</span></td>
+      <td><span class="score-badge ${pass?'score-pass':'score-fail'}">${pass?'合格':'不合格'}</span></td>
+      <td style="color:var(--gray-600);font-size:13px">${date}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('starter-table').innerHTML = `
+    <table>
+      <thead><tr><th>名前</th><th>チャプター</th><th>スコア</th><th>判定</th><th>受験日時</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+/* ── ディレクション編タブ ── */
+function renderDirectionTab() {
+  const data = allResults.filter(r => r.quiz_type === 'direction');
+  document.getElementById('tab-content').innerHTML = `
+    <div class="filter-bar">
+      <input type="text" placeholder="名前で検索..." value="${filterText}" oninput="filterText=this.value;renderDirectionTab()" />
+      <select class="filter-select" onchange="filterResult=this.value;renderDirectionTab()">
+        <option value="all" ${filterResult==='all'?'selected':''}>全員</option>
+        <option value="pass" ${filterResult==='pass'?'selected':''}>合格のみ（8問以上）</option>
+        <option value="fail" ${filterResult==='fail'?'selected':''}>不合格のみ</option>
+      </select>
+      <button class="reload-btn" onclick="loadResults()">🔄 更新</button>
+    </div>
+    <div id="direction-stats"></div>
+    <div class="table-wrap" id="direction-table"></div>
+  `;
+  renderDirectionStats(data);
+  renderDirectionTable(data);
+}
+
+function renderDirectionStats(data) {
+  if (!data.length) { document.getElementById('direction-stats').innerHTML = ''; return; }
+  const total = data.length;
+  const avg = (data.reduce((s, r) => s + r.score, 0) / total).toFixed(1);
+  const passCount = data.filter(r => r.score >= 8).length;
+  const passRate = Math.round((passCount / total) * 100);
+  const max = Math.max(...data.map(r => r.score));
+  document.getElementById('direction-stats').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-value">${total}</div><div class="stat-label">受験者数</div></div>
+      <div class="stat-item"><div class="stat-value">${avg}</div><div class="stat-label">平均点</div></div>
+      <div class="stat-item"><div class="stat-value">${passRate}%</div><div class="stat-label">合格率</div></div>
+      <div class="stat-item"><div class="stat-value">${max}</div><div class="stat-label">最高点</div></div>
+    </div>`;
+}
+
+function renderDirectionTable(data) {
+  let filtered = data;
+  if (filterText) filtered = filtered.filter(r => r.name.includes(filterText));
+  if (filterResult === 'pass') filtered = filtered.filter(r => r.score >= 8);
+  if (filterResult === 'fail') filtered = filtered.filter(r => r.score < 8);
+  if (!filtered.length) { document.getElementById('direction-table').innerHTML = '<div class="empty-msg">該当データなし</div>'; return; }
+  const rows = filtered.map(r => {
+    const pass = r.score >= 8;
+    const pct = Math.round((r.score / r.total) * 100);
+    const date = new Date(r.created_at).toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return `<tr>
+      <td>${r.name}</td>
+      <td><span class="score-badge ${pass ? 'score-pass' : 'score-fail'}">${r.score} / ${r.total}点（${pct}%）</span></td>
+      <td><span class="score-badge ${pass ? 'score-pass' : 'score-fail'}">${pass ? '合格' : '不合格'}</span></td>
+      <td style="color:var(--gray-600);font-size:13px">${date}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('direction-table').innerHTML = `
+    <table>
+      <thead><tr><th>名前</th><th>スコア</th><th>判定</th><th>受験日時</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+/* ── 受験者サマリータブ ── */
+function renderSummaryTab() {
+  document.getElementById('tab-content').innerHTML = `
+    <div class="filter-bar">
+      <input type="text" placeholder="名前で検索..." value="${filterText}" oninput="filterText=this.value;renderSummaryTab()" />
+      <button class="reload-btn" onclick="loadResults()">🔄 更新</button>
+    </div>
+    <div class="table-wrap" id="summary-table"></div>
+  `;
+  renderSummaryTable();
+}
+
+function renderSummaryTable() {
+  // 全名前を集計
+  const byName = {};
+  allResults.forEach(r => {
+    if (!byName[r.name]) byName[r.name] = { orientResults:[], starterByChapter:{}, directionResults:[], totalCount:0 };
+    byName[r.name].totalCount++;
+    if (!r.quiz_type || r.quiz_type==='orient') {
+      byName[r.name].orientResults.push(r.score);
+    } else if (r.quiz_type==='starter') {
+      if (!byName[r.name].starterByChapter[r.chapter]) byName[r.name].starterByChapter[r.chapter] = [];
+      byName[r.name].starterByChapter[r.chapter].push(r.score);
+    } else if (r.quiz_type==='direction') {
+      byName[r.name].directionResults.push(r.score);
+    }
+  });
+
+  let names = Object.keys(byName);
+  if (filterText) names = names.filter(n => n.includes(filterText));
+  if (!names.length) { document.getElementById('summary-table').innerHTML='<div class="empty-msg">該当データなし</div>'; return; }
+
+  const rows = names.map(name => {
+    const d = byName[name];
+    // オリエン：最高スコア
+    const orientBest = d.orientResults.length ? Math.max(...d.orientResults) : null;
+    const orientPass = orientBest !== null && orientBest >= PASS_ORIENT;
+    const orientCell = orientBest !== null
+      ? `<span class="score-badge ${orientPass?'score-pass':'score-fail'}">${orientBest}/10</span>`
+      : `<span style="color:var(--gray-400);font-size:12px">未受験</span>`;
+
+    // スターター：各チャプターの最高スコア → 合否ドット
+    const chDots = CHAPTERS.map(ch => {
+      const scores = d.starterByChapter[ch];
+      if (!scores || scores.length===0) return `<span class="ch-dot none">—</span>`;
+      const best = Math.max(...scores);
+      const pass = best >= PASS_STARTER;
+      return `<span class="ch-dot ${pass?'pass':'fail'}" title="${CH_LABELS[ch]}：${best}/7">${pass?'✓':'✗'}</span>`;
+    }).join(' ');
+
+    const starterAllPass = CHAPTERS.every(ch => {
+      const scores = d.starterByChapter[ch];
+      return scores && Math.max(...scores) >= PASS_STARTER;
+    });
+
+    const directionBest = d.directionResults.length ? Math.max(...d.directionResults) : null;
+    const directionPass = directionBest !== null && directionBest >= 8;
+    const directionCell = directionBest !== null
+      ? `<span class="score-badge ${directionPass ? 'score-pass' : 'score-fail'}">${directionBest}/10</span>`
+      : `<span style="color:var(--gray-400);font-size:12px">未受験</span>`;
+
+    return `<tr>
+      <td style="font-weight:500">${name}</td>
+      <td>${orientCell}</td>
+      <td style="white-space:nowrap">${chDots}</td>
+      <td>${starterAllPass?'<span class="score-badge score-pass">✓ 完了</span>':'<span style="color:var(--gray-400);font-size:12px">進行中</span>'}</td>
+      <td>${directionCell}</td>
+      <td><span class="count-badge">${d.totalCount}回</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('summary-table').innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>名前</th>
+          <th>オリエン編</th>
+          <th>スターター編（Ch1〜4）</th>
+          <th>スターター完了</th>
+          <th>ディレクション編</th>
+          <th>累計受験回数</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
     </table>
+    <p style="font-size:11px;color:var(--gray-400);margin-top:12px">✓=合格（6/7以上）　✗=不合格　—=未受験　スターターは各チャプターの最高スコアを表示</p>
   `;
 }
 </script>
