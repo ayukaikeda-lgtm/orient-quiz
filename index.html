@@ -7,386 +7,97 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --purple: #534AB7;
-    --purple-light: #EEEDFE;
-    --purple-dark: #3C3489;
-    --green-bg: #EAF3DE;
-    --green-text: #27500A;
-    --green-border: #639922;
-    --red-bg: #FCEBEB;
-    --red-text: #791F1F;
-    --red-border: #A32D2D;
-    --gray-100: #f5f5f5;
-    --gray-200: #e8e8e8;
-    --gray-400: #aaa;
-    --gray-600: #666;
-    --gray-900: #111;
-    --white: #fff;
-    --radius: 10px;
+    --purple: #534AB7; --purple-light: #EEEDFE; --purple-dark: #3C3489;
+    --green-bg: #EAF3DE; --green-text: #27500A; --green-border: #639922;
+    --red-bg: #FCEBEB; --red-text: #791F1F; --red-border: #A32D2D;
+    --gray-100: #f5f5f5; --gray-200: #e8e8e8; --gray-400: #aaa;
+    --gray-600: #666; --gray-900: #111; --white: #fff; --radius: 10px;
     --shadow: 0 4px 24px rgba(0,0,0,0.08);
   }
-
-  body {
-    font-family: 'Noto Sans JP', sans-serif;
-    background: #F4F2FF;
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 40px 16px 80px;
-  }
-
-  .container {
-    width: 100%;
-    max-width: 600px;
-  }
-
-  /* Header */
-  .header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-  .header .logo {
-    display: inline-block;
-    background: var(--purple);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    padding: 4px 14px;
-    border-radius: 20px;
-    margin-bottom: 14px;
-  }
-  .header h1 {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--gray-900);
-    line-height: 1.4;
-  }
-  .header p {
-    font-size: 13px;
-    color: var(--gray-600);
-    margin-top: 6px;
-  }
-
-  /* Card */
-  .card {
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 28px 28px 24px;
-    margin-bottom: 16px;
-  }
-
-  /* Progress */
-  .progress-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .progress-bar {
-    flex: 1;
-    height: 5px;
-    background: var(--gray-200);
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--purple);
-    border-radius: 5px;
-    transition: width 0.4s ease;
-  }
-  .progress-label {
-    font-size: 12px;
-    color: var(--gray-400);
-    white-space: nowrap;
-    min-width: 40px;
-    text-align: right;
-  }
-
-  /* Section badge */
-  .section-badge {
-    display: inline-block;
-    background: var(--purple-light);
-    color: var(--purple-dark);
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    letter-spacing: 0.05em;
-  }
-
-  .question-text {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--gray-900);
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  /* Choices */
-  .choices {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  .choice-btn {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1.5px solid var(--gray-200);
-    border-radius: var(--radius);
-    background: var(--white);
-    color: var(--gray-900);
-    font-size: 14px;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    text-align: left;
-    transition: border-color 0.15s, background 0.15s;
-    line-height: 1.5;
-  }
-  .choice-btn:hover:not(:disabled) {
-    border-color: var(--purple);
-    background: var(--purple-light);
-  }
-  .choice-btn.correct {
-    border-color: var(--green-border);
-    background: var(--green-bg);
-    color: var(--green-text);
-    font-weight: 500;
-  }
-  .choice-btn.wrong {
-    border-color: var(--red-border);
-    background: var(--red-bg);
-    color: var(--red-text);
-  }
-  .choice-btn.dimmed {
-    opacity: 0.45;
-  }
+  body { font-family: 'Noto Sans JP', sans-serif; background: #F4F2FF; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px 80px; }
+  .container { width: 100%; max-width: 600px; }
+  .header { text-align: center; margin-bottom: 32px; }
+  .header .logo { display: inline-block; background: var(--purple); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; padding: 4px 14px; border-radius: 20px; margin-bottom: 14px; }
+  .header h1 { font-size: 22px; font-weight: 700; color: var(--gray-900); line-height: 1.4; }
+  .header p { font-size: 13px; color: var(--gray-600); margin-top: 6px; }
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 28px 24px; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .progress-bar { flex: 1; height: 5px; background: var(--gray-200); border-radius: 5px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--purple); border-radius: 5px; transition: width 0.4s ease; }
+  .progress-label { font-size: 12px; color: var(--gray-400); white-space: nowrap; min-width: 40px; text-align: right; }
+  .section-badge { display: inline-block; background: var(--purple-light); color: var(--purple-dark); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+  .question-text { font-size: 16px; font-weight: 500; color: var(--gray-900); line-height: 1.7; margin-bottom: 20px; }
+  .choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .choice-btn { width: 100%; padding: 12px 16px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); background: var(--white); color: var(--gray-900); font-size: 14px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; text-align: left; transition: border-color 0.15s, background 0.15s; line-height: 1.5; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--purple); background: var(--purple-light); }
+  .choice-btn.correct { border-color: var(--green-border); background: var(--green-bg); color: var(--green-text); font-weight: 500; }
+  .choice-btn.wrong { border-color: var(--red-border); background: var(--red-bg); color: var(--red-text); }
+  .choice-btn.dimmed { opacity: 0.45; }
   .choice-btn:disabled { cursor: default; }
-
-  /* Feedback */
-  .feedback {
-    font-size: 13px;
-    line-height: 1.7;
-    padding: 12px 14px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-  }
+  .feedback { font-size: 13px; line-height: 1.7; padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; }
   .feedback.ok { background: var(--green-bg); color: var(--green-text); }
   .feedback.ng { background: var(--red-bg); color: var(--red-text); }
-
-  /* Buttons */
-  .btn {
-    display: inline-block;
-    padding: 10px 24px;
-    border-radius: var(--radius);
-    font-size: 14px;
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 500;
-    cursor: pointer;
-    border: 1.5px solid var(--gray-200);
-    background: var(--white);
-    color: var(--gray-900);
-    transition: background 0.15s;
-  }
+  .btn { display: inline-block; padding: 10px 24px; border-radius: var(--radius); font-size: 14px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; border: 1.5px solid var(--gray-200); background: var(--white); color: var(--gray-900); transition: background 0.15s; }
   .btn:hover { background: var(--gray-100); }
-  .btn.primary {
-    background: var(--purple);
-    color: var(--white);
-    border-color: var(--purple);
-  }
+  .btn.primary { background: var(--purple); color: var(--white); border-color: var(--purple); }
   .btn.primary:hover { background: var(--purple-dark); }
-
-  /* Start screen */
   .start-screen { text-align: center; padding: 16px 0 8px; }
   .start-screen .icon { font-size: 48px; margin-bottom: 16px; }
   .start-screen h2 { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; }
   .start-screen p { font-size: 14px; color: var(--gray-600); line-height: 1.8; margin-bottom: 24px; }
-  .info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 28px;
-    text-align: left;
-  }
-  .info-item {
-    background: var(--gray-100);
-    border-radius: 8px;
-    padding: 12px 14px;
-  }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; text-align: left; }
+  .info-item { background: var(--gray-100); border-radius: 8px; padding: 12px 14px; }
   .info-item .label { font-size: 11px; color: var(--gray-400); margin-bottom: 2px; }
   .info-item .value { font-size: 15px; font-weight: 700; color: var(--gray-900); }
-
-  /* Result */
+  .name-input-wrap { margin-bottom: 24px; text-align: left; }
+  .name-input-wrap label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-600); margin-bottom: 6px; }
+  .name-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); font-size: 15px; font-family: 'Noto Sans JP', sans-serif; outline: none; transition: border-color 0.15s; }
+  .name-input:focus { border-color: var(--purple); }
   .result-screen { text-align: center; padding: 8px 0; }
-  .score-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: var(--purple-light);
-    border: 4px solid var(--purple);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-  }
+  .score-circle { width: 120px; height: 120px; border-radius: 50%; background: var(--purple-light); border: 4px solid var(--purple); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; }
   .score-num { font-size: 36px; font-weight: 700; color: var(--purple); line-height: 1; }
   .score-denom { font-size: 13px; color: var(--purple-dark); }
   .score-pct { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
   .score-msg { font-size: 14px; color: var(--gray-600); line-height: 1.7; margin-bottom: 24px; }
-
-  /* Review */
-  .review-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--gray-600);
-    letter-spacing: 0.05em;
-    margin-bottom: 12px;
-    text-align: left;
-  }
-  .review-item {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--gray-200);
-    text-align: left;
-  }
+  .saved-badge { display: inline-block; background: var(--green-bg); color: var(--green-text); font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
+  .review-title { font-size: 13px; font-weight: 700; color: var(--gray-600); letter-spacing: 0.05em; margin-bottom: 12px; text-align: left; }
+  .review-item { padding: 12px 0; border-bottom: 1px solid var(--gray-200); text-align: left; }
   .review-item:last-child { border-bottom: none; }
   .review-q { font-size: 13px; color: var(--gray-900); line-height: 1.6; margin-bottom: 4px; }
   .review-a { font-size: 12px; color: var(--gray-600); line-height: 1.5; }
   .tag { display: inline-block; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px; margin-right: 6px; }
   .tag.ok { background: var(--green-bg); color: var(--green-text); }
   .tag.ng { background: var(--red-bg); color: var(--red-text); }
-
-  @media (max-width: 480px) {
-    .card { padding: 20px 16px; }
-    .info-grid { grid-template-columns: 1fr 1fr; }
-  }
 </style>
 </head>
 <body>
-
 <div class="container">
   <div class="header">
     <div class="logo">SHO-SAN</div>
     <h1>初日オリエン<br>理解度テスト</h1>
     <p>オリエンの内容をしっかり確認しよう</p>
   </div>
-
-  <div class="card" id="main-card">
-    <!-- JS で描画 -->
-  </div>
+  <div class="card" id="main-card"></div>
 </div>
-
 <script>
+const SUPABASE_URL = 'https://zigtfxvdtjzlkqnhitrf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppZ3RmeHZkdGp6bGtxbmhpdHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzY3MjcsImV4cCI6MjA5NDc1MjcyN30.QOmgD3vbYUjBqo3Qg6gcsFoyUjEZ0GVl_KTeP4Jn-4k';
+
 const questions = [
-  {
-    section: "SHO-SANについて",
-    q: "SHO-SANの社長の名前は？",
-    choices: ["高谷 一起", "田中 翔", "山本 一樹", "石井 将"],
-    ans: 0,
-    exp: "社長は高谷 一起（いっき）さんです。あだ名は「いっき」または「いきにき」です。"
-  },
-  {
-    section: "SHO-SANについて",
-    q: "SHO-SANが認定されているのはどれですか？",
-    choices: ["健康経営優良企業", "働きがいのある会社", "ベストベンチャー100", "女性活躍推進企業"],
-    ans: 1,
-    exp: "「働きがいのある会社」認定企業です。"
-  },
-  {
-    section: "SHO-SANについて",
-    q: "SNSに関することを管理・運用する部署は？",
-    choices: ["フロントDiv", "制作Div", "SNSディビジョン", "マーケティングDiv"],
-    ans: 2,
-    exp: "SNSに関することを管理・運用するのがSNSディビジョンです。"
-  },
-  {
-    section: "勤務ルール",
-    q: "出社後の正しい順番はどれですか？",
-    choices: [
-      "ジョブカンで打刻 → バーチャルオフィスに入室",
-      "Slackを開く → 業務開始",
-      "バーチャルオフィスに入室 → ジョブカンで打刻",
-      "メールを確認 → 朝礼"
-    ],
-    ans: 2,
-    exp: "まずバーチャルオフィスに入室してから、ジョブカンで打刻するのが正しい流れです。"
-  },
-  {
-    section: "勤務ルール",
-    q: "欠勤・遅刻する場合、連絡はいつまでにすべきですか？",
-    choices: ["当日の勤務開始時刻まで", "前日の夜までに", "1時間前までに", "始業後に気づいたタイミングで"],
-    ans: 0,
-    exp: "欠勤・遅刻の連絡は当日の勤務開始時刻までに行う必要があります。"
-  },
-  {
-    section: "ジョブカン申請",
-    q: "シフト変更の申請はいつまでに行う必要がありますか？",
-    choices: ["当日OK", "前日まで", "3日前まで", "1週間前まで"],
-    ans: 1,
-    exp: "シフト変更の申請は前日までに行う必要があります。"
-  },
-  {
-    section: "ジョブカン申請",
-    q: "退勤時のタスク管理の目的として正しいものは？",
-    choices: [
-      "翌日のスケジュールを組むため",
-      "自分の作業ログを残すため",
-      "上司への報告のため",
-      "チームへの引き継ぎのため"
-    ],
-    ans: 1,
-    exp: "退勤時のタスク管理は、自分の作業ログを残すために行います。"
-  },
-  {
-    section: "SHO-SANのルール",
-    q: "等級制度について正しいのはどれですか？",
-    choices: [
-      "全員同じ等級からスタート",
-      "スキルや成果に応じて等級が変わる",
-      "入社年次で等級が決まる",
-      "部署によって制度が異なる"
-    ],
-    ans: 1,
-    exp: "スキルや成果に応じて等級が変わる仕組みです。"
-  },
-  {
-    section: "SHO-SANのルール",
-    q: "エスカレーションとは何ですか？",
-    choices: [
-      "クライアントへの直接連絡",
-      "問題や判断が必要な事象を上位者に報告・相談すること",
-      "自分で解決するまで持ちこたえること",
-      "他部署に転送すること"
-    ],
-    ans: 1,
-    exp: "エスカレーションとは、問題や判断が必要な事象を上位者に報告・相談することです。"
-  },
-  {
-    section: "ツール関連説明",
-    q: "Notionの主な使い方として正しいものは？",
-    choices: [
-      "メール送信ツール",
-      "社内の情報・資料管理ツール",
-      "勤怠管理専用ツール",
-      "広告配信ツール"
-    ],
-    ans: 1,
-    exp: "Notionは社内の情報・資料管理ツールとして使用します。"
-  }
+  { section:"SHO-SANについて", q:"SHO-SANの社長の名前は？", choices:["高谷 一起","田中 翔","山本 一樹","石井 将"], ans:0, exp:"社長は高谷 一起（いっき）さんです。" },
+  { section:"SHO-SANについて", q:"SHO-SANが認定されているのはどれですか？", choices:["健康経営優良企業","働きがいのある会社","ベストベンチャー100","女性活躍推進企業"], ans:1, exp:"「働きがいのある会社」認定企業です。" },
+  { section:"SHO-SANについて", q:"SNSに関することを管理・運用する部署は？", choices:["フロントDiv","制作Div","SNSディビジョン","マーケティングDiv"], ans:2, exp:"SNSに関することを管理・運用するのがSNSディビジョンです。" },
+  { section:"勤務ルール", q:"出社後の正しい順番はどれですか？", choices:["ジョブカンで打刻 → バーチャルオフィスに入室","Slackを開く → 業務開始","バーチャルオフィスに入室 → ジョブカンで打刻","メールを確認 → 朝礼"], ans:2, exp:"まずバーチャルオフィスに入室してから、ジョブカンで打刻するのが正しい流れです。" },
+  { section:"勤務ルール", q:"欠勤・遅刻する場合、連絡はいつまでにすべきですか？", choices:["当日の勤務開始時刻まで","前日の夜までに","1時間前までに","始業後に気づいたタイミングで"], ans:0, exp:"欠勤・遅刻の連絡は当日の勤務開始時刻までに行う必要があります。" },
+  { section:"ジョブカン申請", q:"シフト変更の申請はいつまでに行う必要がありますか？", choices:["当日OK","前日まで","3日前まで","1週間前まで"], ans:1, exp:"シフト変更の申請は前日までに行う必要があります。" },
+  { section:"ジョブカン申請", q:"退勤時のタスク管理の目的として正しいものは？", choices:["翌日のスケジュールを組むため","自分の作業ログを残すため","上司への報告のため","チームへの引き継ぎのため"], ans:1, exp:"退勤時のタスク管理は、自分の作業ログを残すために行います。" },
+  { section:"SHO-SANのルール", q:"等級制度について正しいのはどれですか？", choices:["全員同じ等級からスタート","スキルや成果に応じて等級が変わる","入社年次で等級が決まる","部署によって制度が異なる"], ans:1, exp:"スキルや成果に応じて等級が変わる仕組みです。" },
+  { section:"SHO-SANのルール", q:"エスカレーションとは何ですか？", choices:["クライアントへの直接連絡","問題や判断が必要な事象を上位者に報告・相談すること","自分で解決するまで持ちこたえること","他部署に転送すること"], ans:1, exp:"エスカレーションとは、問題や判断が必要な事象を上位者に報告・相談することです。" },
+  { section:"ツール関連説明", q:"Notionの主な使い方として正しいものは？", choices:["メール送信ツール","社内の情報・資料管理ツール","勤怠管理専用ツール","広告配信ツール"], ans:1, exp:"Notionは社内の情報・資料管理ツールとして使用します。" }
 ];
 
-let current = 0;
-let score = 0;
-let log = [];
-let phase = 'start'; // start | quiz | result
-
+let current = 0, score = 0, log = [], userName = '';
 const card = document.getElementById('main-card');
 
 function renderStart() {
@@ -401,9 +112,18 @@ function renderStart() {
         <div class="info-item"><div class="label">制限時間</div><div class="value">なし</div></div>
         <div class="info-item"><div class="label">合格ライン</div><div class="value">7問以上</div></div>
       </div>
+      <div class="name-input-wrap">
+        <label>あなたの名前を入力してください</label>
+        <input class="name-input" id="nameInput" type="text" placeholder="例：山田 太郎" maxlength="30">
+      </div>
       <button class="btn primary" onclick="startQuiz()">テスト開始 →</button>
-    </div>
-  `;
+    </div>`;
+}
+
+function startQuiz() {
+  const input = document.getElementById('nameInput').value.trim();
+  if (!input) { alert('名前を入力してください'); return; }
+  userName = input; renderQuiz();
 }
 
 function renderQuiz() {
@@ -416,12 +136,8 @@ function renderQuiz() {
     </div>
     <div class="section-badge">${q.section}</div>
     <div class="question-text">${q.q}</div>
-    <div class="choices" id="choices">
-      ${q.choices.map((c, i) => `<button class="choice-btn" id="c${i}" onclick="pick(${i})">${c}</button>`).join('')}
-    </div>
-    <div id="feedback"></div>
-    <div id="nav"></div>
-  `;
+    <div class="choices">${q.choices.map((c, i) => `<button class="choice-btn" id="c${i}" onclick="pick(${i})">${c}</button>`).join('')}</div>
+    <div id="feedback"></div><div id="nav"></div>`;
 }
 
 function pick(i) {
@@ -429,7 +145,6 @@ function pick(i) {
   const correct = i === q.ans;
   if (correct) score++;
   log.push({ q: q.q, correct, yourAns: q.choices[i], rightAns: q.choices[q.ans] });
-
   for (let j = 0; j < q.choices.length; j++) {
     const btn = document.getElementById('c' + j);
     btn.disabled = true;
@@ -437,53 +152,48 @@ function pick(i) {
     else if (j === i) btn.classList.add('wrong');
     else btn.classList.add('dimmed');
   }
-
-  const fb = document.getElementById('feedback');
-  fb.innerHTML = `<div class="feedback ${correct ? 'ok' : 'ng'}">${correct ? '✓ 正解！' : '✗ 不正解。'} ${q.exp}</div>`;
-
-  const nav = document.getElementById('nav');
-  if (current < questions.length - 1) {
-    nav.innerHTML = `<button class="btn primary" onclick="nextQ()">次の問題 →</button>`;
-  } else {
-    nav.innerHTML = `<button class="btn primary" onclick="renderResult()">結果を見る →</button>`;
-  }
+  document.getElementById('feedback').innerHTML = `<div class="feedback ${correct?'ok':'ng'}">${correct?'✓ 正解！':'✗ 不正解。'} ${q.exp}</div>`;
+  document.getElementById('nav').innerHTML = current < questions.length - 1
+    ? `<button class="btn primary" onclick="nextQ()">次の問題 →</button>`
+    : `<button class="btn primary" onclick="finishQuiz()">結果を見る →</button>`;
 }
 
 function nextQ() { current++; renderQuiz(); }
 
-function renderResult() {
-  const pct = Math.round((score / questions.length) * 100);
-  let msg = '';
-  if (pct >= 90) msg = '完璧です！オリエンの内容はバッチリ理解できています👏';
-  else if (pct >= 70) msg = 'よく理解できています！間違えた問題だけ復習しておきましょう。';
-  else if (pct >= 50) msg = 'もう少し復習が必要です。オリエン資料を読み直してみましょう。';
-  else msg = 'オリエン資料をしっかり読み直してから、もう一度挑戦してみましょう！';
-
-  const reviewHTML = log.map((item, i) => `
-    <div class="review-item">
-      <div class="review-q"><span class="tag ${item.correct ? 'ok' : 'ng'}">${item.correct ? '○' : '✗'}</span>Q${i + 1}：${item.q}</div>
-      ${!item.correct ? `<div class="review-a" style="padding-left:26px">あなたの回答：${item.yourAns}<br>正解：<strong>${item.rightAns}</strong></div>` : ''}
-    </div>
-  `).join('');
-
-  card.innerHTML = `
-    <div class="result-screen">
-      <div class="score-circle">
-        <div class="score-num">${score}</div>
-        <div class="score-denom">/ ${questions.length}</div>
-      </div>
-      <div class="score-pct">${pct}%</div>
-      <div class="score-msg">${msg}</div>
-      <button class="btn primary" onclick="restart()" style="margin-bottom:28px">もう一度挑戦する</button>
-      <div class="review-title">回答の振り返り</div>
-      ${reviewHTML}
-    </div>
-  `;
+async function finishQuiz() {
+  await saveResult(); renderResult();
 }
 
-function startQuiz() { phase = 'quiz'; renderQuiz(); }
-function restart() { current = 0; score = 0; log = []; renderStart(); }
+async function saveResult() {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/quiz_results`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ name: userName, score, total: questions.length })
+    });
+  } catch(e) { console.error(e); }
+}
 
+function renderResult() {
+  const pct = Math.round((score / questions.length) * 100);
+  const msg = pct>=90?'完璧です！オリエンの内容はバッチリ理解できています👏':pct>=70?'よく理解できています！間違えた問題だけ復習しておきましょう。':pct>=50?'もう少し復習が必要です。オリエン資料を読み直してみましょう。':'オリエン資料をしっかり読み直してから、もう一度挑戦してみましょう！';
+  const reviewHTML = log.map((item, i) => `
+    <div class="review-item">
+      <div class="review-q"><span class="tag ${item.correct?'ok':'ng'}">${item.correct?'○':'✗'}</span>Q${i+1}：${item.q}</div>
+      ${!item.correct?`<div class="review-a" style="padding-left:26px">あなたの回答：${item.yourAns}<br>正解：<strong>${item.rightAns}</strong></div>`:''}
+    </div>`).join('');
+  card.innerHTML = `
+    <div class="result-screen">
+      <div class="score-circle"><div class="score-num">${score}</div><div class="score-denom">/ ${questions.length}</div></div>
+      <div class="score-pct">${pct}%</div>
+      <div class="score-msg">${msg}</div>
+      <div class="saved-badge">✓ 結果を保存しました</div><br><br>
+      <button class="btn" onclick="restart()" style="margin-bottom:28px">もう一度挑戦する</button>
+      <div class="review-title">回答の振り返り</div>${reviewHTML}
+    </div>`;
+}
+
+function restart() { current=0; score=0; log=[]; userName=''; renderStart(); }
 renderStart();
 </script>
 </body>

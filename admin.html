@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>理解度テスト 管理ボード | SHO-SAN</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #534AB7; --purple-light: #EEEDFE; --purple-dark: #3C3489;
+    --green-bg: #EAF3DE; --green-text: #27500A;
+    --red-bg: #FCEBEB; --red-text: #791F1F;
+    --gray-100: #f5f5f5; --gray-200: #e8e8e8; --gray-400: #aaa;
+    --gray-600: #666; --gray-900: #111; --white: #fff; --radius: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  body { font-family: 'Noto Sans JP', sans-serif; background: #F4F2FF; min-height: 100vh; padding: 40px 16px 80px; }
+  .container { width: 100%; max-width: 860px; margin: 0 auto; }
+  .header { text-align: center; margin-bottom: 32px; }
+  .header .logo { display: inline-block; background: var(--purple); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; padding: 4px 14px; border-radius: 20px; margin-bottom: 14px; }
+  .header h1 { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+  .header p { font-size: 13px; color: var(--gray-600); margin-top: 6px; }
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 16px; }
+
+  /* Login */
+  .login-wrap { max-width: 360px; margin: 0 auto; text-align: center; padding: 16px 0; }
+  .login-wrap .icon { font-size: 40px; margin-bottom: 16px; }
+  .login-wrap h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .login-wrap p { font-size: 13px; color: var(--gray-600); margin-bottom: 24px; }
+  .input-field { width: 100%; padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); font-size: 15px; font-family: 'Noto Sans JP', sans-serif; outline: none; margin-bottom: 12px; transition: border-color 0.15s; }
+  .input-field:focus { border-color: var(--purple); }
+  .btn { display: inline-block; padding: 10px 24px; border-radius: var(--radius); font-size: 14px; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; cursor: pointer; border: 1.5px solid var(--gray-200); background: var(--white); color: var(--gray-900); transition: background 0.15s; width: 100%; }
+  .btn.primary { background: var(--purple); color: var(--white); border-color: var(--purple); }
+  .btn.primary:hover { background: var(--purple-dark); }
+  .error-msg { font-size: 13px; color: var(--red-text); margin-top: 8px; }
+
+  /* Stats */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat-item { background: var(--gray-100); border-radius: 8px; padding: 16px; text-align: center; }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--purple); }
+  .stat-label { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+  /* Filter */
+  .filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-bar input { flex: 1; min-width: 160px; padding: 8px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; outline: none; }
+  .filter-bar input:focus { border-color: var(--purple); }
+  .filter-select { padding: 8px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; outline: none; background: white; }
+  .reload-btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; border: 1.5px solid var(--gray-200); background: white; cursor: pointer; }
+  .reload-btn:hover { background: var(--gray-100); }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead th { background: var(--gray-100); padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-600); letter-spacing: 0.05em; border-bottom: 1px solid var(--gray-200); }
+  tbody tr { border-bottom: 1px solid var(--gray-200); transition: background 0.1s; }
+  tbody tr:hover { background: var(--gray-100); }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 12px 14px; color: var(--gray-900); }
+  .score-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+  .score-pass { background: var(--green-bg); color: var(--green-text); }
+  .score-fail { background: var(--red-bg); color: var(--red-text); }
+  .empty-msg { text-align: center; padding: 40px; color: var(--gray-400); font-size: 14px; }
+  .loading { text-align: center; padding: 40px; color: var(--gray-400); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">SHO-SAN</div>
+    <h1>理解度テスト 管理ボード</h1>
+    <p>インターン生の受験結果一覧</p>
+  </div>
+  <div class="card" id="main-card">
+    <div class="login-wrap">
+      <div class="icon">🔐</div>
+      <h2>管理者ログイン</h2>
+      <p>管理メンバー専用ページです。<br>パスワードを入力してください。</p>
+      <input class="input-field" id="pwInput" type="password" placeholder="パスワード" onkeydown="if(event.key==='Enter')login()">
+      <button class="btn primary" onclick="login()">ログイン</button>
+      <div class="error-msg" id="errMsg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://zigtfxvdtjzlkqnhitrf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppZ3RmeHZkdGp6bGtxbmhpdHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzY3MjcsImV4cCI6MjA5NDc1MjcyN30.QOmgD3vbYUjBqo3Qg6gcsFoyUjEZ0GVl_KTeP4Jn-4k';
+const ADMIN_PASSWORD = 'shosan2024';
+
+let allResults = [];
+let filterText = '';
+let filterResult = 'all';
+
+function login() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === ADMIN_PASSWORD) {
+    renderDashboard();
+    loadResults();
+  } else {
+    document.getElementById('errMsg').textContent = 'パスワードが違います';
+  }
+}
+
+function renderDashboard() {
+  document.getElementById('main-card').innerHTML = `
+    <div class="filter-bar">
+      <input type="text" placeholder="名前で検索..." oninput="filterText=this.value;renderTable()" />
+      <select class="filter-select" onchange="filterResult=this.value;renderTable()">
+        <option value="all">全員</option>
+        <option value="pass">合格のみ（7問以上）</option>
+        <option value="fail">不合格のみ</option>
+      </select>
+      <button class="reload-btn" onclick="loadResults()">🔄 更新</button>
+    </div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-item"><div class="stat-value">—</div><div class="stat-label">受験者数</div></div>
+      <div class="stat-item"><div class="stat-value">—</div><div class="stat-label">平均点</div></div>
+      <div class="stat-item"><div class="stat-value">—</div><div class="stat-label">合格率</div></div>
+      <div class="stat-item"><div class="stat-value">—</div><div class="stat-label">最高点</div></div>
+    </div>
+    <div class="table-wrap">
+      <div class="loading" id="tableArea">読み込み中...</div>
+    </div>
+  `;
+}
+
+async function loadResults() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/quiz_results?select=*&order=created_at.desc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    allResults = await res.json();
+    renderStats();
+    renderTable();
+  } catch(e) {
+    document.getElementById('tableArea').innerHTML = '<div class="empty-msg">データの取得に失敗しました</div>';
+  }
+}
+
+function renderStats() {
+  if (!allResults.length) return;
+  const total = allResults.length;
+  const avg = (allResults.reduce((s, r) => s + r.score, 0) / total).toFixed(1);
+  const passCount = allResults.filter(r => r.score >= 7).length;
+  const passRate = Math.round((passCount / total) * 100);
+  const max = Math.max(...allResults.map(r => r.score));
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-item"><div class="stat-value">${total}</div><div class="stat-label">受験者数</div></div>
+    <div class="stat-item"><div class="stat-value">${avg}</div><div class="stat-label">平均点</div></div>
+    <div class="stat-item"><div class="stat-value">${passRate}%</div><div class="stat-label">合格率</div></div>
+    <div class="stat-item"><div class="stat-value">${max}</div><div class="stat-label">最高点</div></div>
+  `;
+}
+
+function renderTable() {
+  let filtered = allResults;
+  if (filterText) filtered = filtered.filter(r => r.name.includes(filterText));
+  if (filterResult === 'pass') filtered = filtered.filter(r => r.score >= 7);
+  if (filterResult === 'fail') filtered = filtered.filter(r => r.score < 7);
+
+  if (!filtered.length) {
+    document.getElementById('tableArea').innerHTML = '<div class="empty-msg">該当するデータがありません</div>';
+    return;
+  }
+
+  const rows = filtered.map(r => {
+    const pass = r.score >= 7;
+    const pct = Math.round((r.score / r.total) * 100);
+    const date = new Date(r.created_at).toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    return `<tr>
+      <td>${r.name}</td>
+      <td><span class="score-badge ${pass?'score-pass':'score-fail'}">${r.score} / ${r.total}点（${pct}%）</span></td>
+      <td><span class="score-badge ${pass?'score-pass':'score-fail'}">${pass?'合格':'不合格'}</span></td>
+      <td style="color:var(--gray-600);font-size:13px">${date}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('tableArea').innerHTML = `
+    <table>
+      <thead><tr><th>名前</th><th>スコア</th><th>判定</th><th>受験日時</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+</script>
+</body>
+</html>
